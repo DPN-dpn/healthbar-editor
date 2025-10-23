@@ -8,6 +8,10 @@ zzmi에서 사용 가능한 모드 'healthbar'의 최신 버전 및 관련 모�
 
 # 사용법
 
+# 모드 원본
+https://gamebanana.com/mods/547423
+2.0 이후로 업뎃없음
+
 # 라이센스
 This project is licensed under the [MIT License](LICENSE).
 
