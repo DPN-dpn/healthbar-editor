@@ -1,11 +1,14 @@
-# Healthbar Editor
+## 이 프로그램은 챗GPT를 통해 만들어 졌음을 알려드립니다.
 
-이 저장소는 Healthbar Editor 프로젝트를 위한 Git 저장소입니다.
+# 미리보기
 
-## 사용법
-- 소스 코드를 추가하고 커밋하세요.
-- 변경 사항을 추적하려면 `git status`를 사용하세요.
+# 기능
+zzmi에서 사용 가능한 모드 'healthbar'의 최신 버전 및 관련 모드 관리용 툴
+'healthbar' - 전투 중인 캐릭터의 HP를 인식해 모드를 변경할 수 있도록 하는 기반 모드
 
----
+# 사용법
 
-최초 커밋을 위해 README 파일이 생성되었습니다.
+# 라이센스
+This project is licensed under the [MIT License](LICENSE).
+
+© 2025 DPN-dpn
