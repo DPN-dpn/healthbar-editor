@@ -9,7 +9,10 @@ class LogView(tk.Frame):
         self.log_text.pack(fill=tk.X)
 
     def append_log(self, msg):
+        import datetime
+        now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        log_line = f"[{now}] {msg}"
         self.log_text.config(state="normal")
-        self.log_text.insert(tk.END, msg + "\n")
+        self.log_text.insert(tk.END, log_line + "\n")
         self.log_text.see(tk.END)
         self.log_text.config(state="disabled")
