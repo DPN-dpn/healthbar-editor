@@ -1,5 +1,6 @@
 import tkinter as tk
 
+
 class MatrixUI(tk.Frame):
     def __init__(self, master):
         super().__init__(master, background="#f0f0f0")
@@ -14,34 +15,80 @@ class MatrixUI(tk.Frame):
         self.frame = tk.Frame(self.canvas, background="#f0f0f0")
         self.canvas.create_window((0,0), window=self.frame, anchor="nw")
         self.frame.bind("<Configure>", self.on_frame_configure)
+
+        self.row_titles = []
+        self.col_titles = []
+        self.checkbox_vars = []
+
         self.create_matrix()
 
     def on_frame_configure(self, event):
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
 
+
     def create_matrix(self):
-        top_label = tk.Label(self.frame, text="행렬 체크박스 UI", font=("Arial", 12, "bold"))
-        top_label.grid(row=0, column=0, columnspan=5, pady=(0,10))
-        for col in range(1, 5):
-            step_label = tk.Label(self.frame, text=str(col), font=("Arial", 10, "bold"))
-            step_label.grid(row=1, column=col, padx=5, pady=5)
-        row_titles = ["A단계", "B단계", "C단계", "D단계", "E단계"]
-        for row in range(2, 7):
-            title_label = tk.Label(self.frame, text=row_titles[row-2], font=("Arial", 10, "bold"))
-            title_label.grid(row=row, column=0, padx=5, pady=5)
-        self.checkbox_vars = []
-        for i in range(5):
-            row_vars = []
-            for j in range(4):
-                var = tk.IntVar()
-                cell_frame = tk.Frame(self.frame, width=80, height=40, bg="#f0f0f0", highlightbackground="#cccccc", highlightthickness=1)
-                cell_frame.grid_propagate(False)
-                cell_frame.grid(row=i+2, column=j+1, padx=5, pady=5, sticky="nsew")
-                chk = tk.Checkbutton(cell_frame, variable=var, width=6, height=2, bg="#f0f0f0", bd=0, highlightthickness=0)
-                chk.pack(expand=True, fill="both")
-                def toggle(var=var):
-                    var.set(0 if var.get() else 1)
-                cell_frame.bind("<Button-1>", lambda e, v=var: toggle(v))
-                chk.bind("<Button-1>", lambda e: None)
-                row_vars.append(var)
-            self.checkbox_vars.append(row_vars)
+        # 전체 UI 초기화
+        for widget in self.frame.winfo_children():
+            widget.destroy()
+
+        # 레이아웃 개편: 1x1 행렬(제목행/열 포함) + 버튼 분리
+        common_font = ("Arial", 11)
+        common_bg = "#e6e6e6"
+        common_bd = 0
+        common_relief = "flat"
+
+        # 최소 1행 1열 보장
+        if not self.row_titles:
+            self.row_titles.append("행1")
+        if not self.col_titles:
+            self.col_titles.append("열1")
+        if not self.checkbox_vars or len(self.checkbox_vars) != len(self.row_titles):
+            self.checkbox_vars = []
+            for _ in self.row_titles:
+                self.checkbox_vars.append([tk.IntVar() for _ in self.col_titles])
+        else:
+            for row_vars in self.checkbox_vars:
+                while len(row_vars) < len(self.col_titles):
+                    row_vars.append(tk.IntVar())
+
+        # 제목행
+        tk.Label(self.frame, text="", width=8, bg=common_bg, borderwidth=common_bd, relief=common_relief).grid(row=0, column=0, padx=0, pady=0, sticky="nsew")
+        for col, title in enumerate(self.col_titles):
+            tk.Label(self.frame, text=title, font=common_font, width=8, height=2, bg=common_bg, borderwidth=common_bd, relief=common_relief).grid(row=0, column=col+1, padx=0, pady=0, sticky="nsew")
+        # 제목열 및 체크박스
+        for row, title in enumerate(self.row_titles):
+            tk.Label(self.frame, text=title, font=common_font, width=8, height=2, bg=common_bg, borderwidth=common_bd, relief=common_relief).grid(row=row+1, column=0, padx=0, pady=0, sticky="nsew")
+            for col in range(len(self.col_titles)):
+                chk = tk.Checkbutton(self.frame, variable=self.checkbox_vars[row][col], width=4, height=2, font=common_font, bg=common_bg, bd=0, highlightthickness=0, relief=common_relief, activebackground="#cccccc")
+                chk.grid(row=row+1, column=col+1, padx=0, pady=0, sticky="nsew")
+
+        # 열 추가 버튼: 행렬 오른쪽에 세로로 길게
+        btn_add_col = tk.Button(self.frame, text="열 +", command=self.add_column, font=common_font, bg=common_bg, borderwidth=common_bd, relief=common_relief, activebackground="#cccccc")
+        btn_add_col.grid(row=0, column=len(self.col_titles)+1, rowspan=len(self.row_titles)+1, padx=(10,0), pady=0, sticky="ns")
+        self.frame.grid_columnconfigure(len(self.col_titles)+1, weight=0)
+
+        # 행 추가 버튼: 행렬 하단에 가로로 길게
+        btn_add_row = tk.Button(self.frame, text="행 +", command=self.add_row, font=common_font, bg=common_bg, borderwidth=common_bd, relief=common_relief, activebackground="#cccccc")
+        btn_add_row.grid(row=len(self.row_titles)+1, column=0, columnspan=len(self.col_titles)+1, padx=0, pady=(10,0), sticky="ew")
+        self.frame.grid_rowconfigure(len(self.row_titles)+1, weight=0)
+        for c in range(len(self.col_titles)+1):
+            self.frame.grid_columnconfigure(c, weight=1)
+
+    def add_column(self):
+        # 새 열 제목 추가
+        new_col_idx = len(self.col_titles) + 1
+        self.col_titles.append(f"열{new_col_idx}")
+        # 각 행에 체크박스 변수 추가
+        for row_vars in self.checkbox_vars:
+            row_vars.append(tk.IntVar())
+        self.create_matrix()
+
+    def add_row(self):
+        # 새 행 제목 추가
+        new_row_idx = len(self.row_titles) + 1
+        self.row_titles.append(f"행{new_row_idx}")
+        # 새 행의 체크박스 변수 리스트 생성
+        new_row_vars = [tk.IntVar() for _ in range(len(self.col_titles))]
+        self.checkbox_vars.append(new_row_vars)
+        self.create_matrix()
+
