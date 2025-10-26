@@ -37,11 +37,12 @@ class MatrixUI(tk.Frame):
         common_bd = 0
         common_relief = "flat"
 
-        # 최소 1행 1열 보장
-        if not self.row_titles:
-            self.row_titles.append("행1")
-        if not self.col_titles:
-            self.col_titles.append("열1")
+        # 최소 1행 1열 보장 제거 (기본 0개 허용)
+        # if not self.row_titles:
+        #     self.row_titles.append("행1")
+        # if not self.col_titles:
+        #     self.col_titles.append("열1")
+        # 체크박스 변수 초기화도 row_titles, col_titles가 0개면 빈 리스트 유지
         if not self.checkbox_vars or len(self.checkbox_vars) != len(self.row_titles):
             self.checkbox_vars = []
             for _ in self.row_titles:
@@ -101,4 +102,18 @@ class MatrixUI(tk.Frame):
         new_row_vars = [tk.IntVar() for _ in range(len(self.col_titles))]
         self.checkbox_vars.append(new_row_vars)
         self.create_matrix()
+
+    def delete_row(self, idx):
+        if len(self.row_titles) > 0:
+            self.row_titles.pop(idx)
+            self.checkbox_vars.pop(idx)
+            self.create_matrix()
+
+    def delete_column(self, idx):
+        if len(self.col_titles) > 0:
+            self.col_titles.pop(idx)
+            for row_vars in self.checkbox_vars:
+                if len(row_vars) > idx:
+                    row_vars.pop(idx)
+            self.create_matrix()
 
