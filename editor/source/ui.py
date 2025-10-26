@@ -1,7 +1,6 @@
 
 import tkinter as tk
 from toolbar import Toolbar
-from matrix import MatrixUI
 from logview import LogView
 
 class HealthbarEditorApp:
@@ -10,8 +9,6 @@ class HealthbarEditorApp:
         self.root.title("Healthbar Editor")
         self.root.geometry("800x600")
         self.toolbar = Toolbar(self.root, self.new_project, self.load_project, self.edit_project)
-        self.matrix_ui = MatrixUI(self.root)
-        self.matrix_ui.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         self.logview = LogView(self.root)
 
     def append_log(self, msg):
@@ -25,4 +22,3 @@ class HealthbarEditorApp:
 
     def edit_project(self):
         self.append_log("편집하기 클릭")
-        self.matrix_scroll_y.pack(side=tk.RIGHT, fill=tk.Y)
