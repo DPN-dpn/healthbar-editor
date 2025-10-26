@@ -54,21 +54,31 @@ class MatrixUI(tk.Frame):
         # 제목행
         tk.Label(self.frame, text="", width=8, bg=common_bg, borderwidth=common_bd, relief=common_relief).grid(row=0, column=0, padx=0, pady=0, sticky="nsew")
         for col, title in enumerate(self.col_titles):
-            tk.Label(self.frame, text=title, font=common_font, width=8, height=2, bg=common_bg, borderwidth=common_bd, relief=common_relief).grid(row=0, column=col+1, padx=0, pady=0, sticky="nsew")
+            # 열 제목 라벨 + 삭제 버튼을 한 줄에 Frame으로 묶음
+            col_title_frame = tk.Frame(self.frame, bg=common_bg)
+            col_title_frame.grid(row=0, column=col+1, padx=0, pady=0, sticky="nsew")
+            tk.Label(col_title_frame, text=title, font=common_font, width=8, height=2, bg=common_bg, borderwidth=common_bd, relief=common_relief).pack(side=tk.LEFT, fill="y")
+            btn_del_col = tk.Button(col_title_frame, text="-", command=lambda c=col: self.delete_column(c), font=common_font, bg=common_bg, borderwidth=common_bd, relief=common_relief, activebackground="#cccccc")
+            btn_del_col.pack(side=tk.LEFT, fill="y")
         # 제목열 및 체크박스
         for row, title in enumerate(self.row_titles):
-            tk.Label(self.frame, text=title, font=common_font, width=8, height=2, bg=common_bg, borderwidth=common_bd, relief=common_relief).grid(row=row+1, column=0, padx=0, pady=0, sticky="nsew")
+            # 행 제목 라벨 + 삭제 버튼을 한 줄에 Frame으로 묶음
+            row_title_frame = tk.Frame(self.frame, bg=common_bg)
+            row_title_frame.grid(row=row+1, column=0, padx=0, pady=0, sticky="nsew")
+            tk.Label(row_title_frame, text=title, font=common_font, width=8, height=2, bg=common_bg, borderwidth=common_bd, relief=common_relief).pack(side=tk.LEFT, fill="x")
+            btn_del_row = tk.Button(row_title_frame, text="-", command=lambda r=row: self.delete_row(r), font=common_font, bg=common_bg, borderwidth=common_bd, relief=common_relief, activebackground="#cccccc")
+            btn_del_row.pack(side=tk.LEFT, fill="x")
             for col in range(len(self.col_titles)):
                 chk = tk.Checkbutton(self.frame, variable=self.checkbox_vars[row][col], width=4, height=2, font=common_font, bg=common_bg, bd=0, highlightthickness=0, relief=common_relief, activebackground="#cccccc")
                 chk.grid(row=row+1, column=col+1, padx=0, pady=0, sticky="nsew")
 
         # 열 추가 버튼: 행렬 오른쪽에 세로로 길게
-        btn_add_col = tk.Button(self.frame, text="열 +", command=self.add_column, font=common_font, bg=common_bg, borderwidth=common_bd, relief=common_relief, activebackground="#cccccc")
+        btn_add_col = tk.Button(self.frame, text="+", command=self.add_column, font=common_font, bg=common_bg, borderwidth=common_bd, relief=common_relief, activebackground="#cccccc")
         btn_add_col.grid(row=0, column=len(self.col_titles)+1, rowspan=len(self.row_titles)+1, padx=(10,0), pady=0, sticky="ns")
         self.frame.grid_columnconfigure(len(self.col_titles)+1, weight=0)
 
         # 행 추가 버튼: 행렬 하단에 가로로 길게
-        btn_add_row = tk.Button(self.frame, text="행 +", command=self.add_row, font=common_font, bg=common_bg, borderwidth=common_bd, relief=common_relief, activebackground="#cccccc")
+        btn_add_row = tk.Button(self.frame, text="+", command=self.add_row, font=common_font, bg=common_bg, borderwidth=common_bd, relief=common_relief, activebackground="#cccccc")
         btn_add_row.grid(row=len(self.row_titles)+1, column=0, columnspan=len(self.col_titles)+1, padx=0, pady=(10,0), sticky="ew")
         self.frame.grid_rowconfigure(len(self.row_titles)+1, weight=0)
         for c in range(len(self.col_titles)+1):
