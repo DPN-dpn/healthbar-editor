@@ -6,12 +6,13 @@ class TreeViewModel:
         self.rows = []
 
     def add_row(self, values=None):
-        # 첫 번째 값은 행 번호로 자동 지정
-        row_num = str(len(self.rows) + 1)
-        if values is None:
-            values = ["" for _ in self.columns[1:]]
-        # 첫 번째 값에 행 번호 삽입
-        full_values = [row_num] + values
+        # 첫 번째 값은 임시 행 제목("행N")
+        row_title = f"행{len(self.rows) + 1}"
+        col_count = len(self.columns)
+        # 나머지 컬럼은 모두 0(미체크)로 초기화
+        if values is None or len(values) != col_count - 1:
+            values = [0 for _ in range(col_count - 1)]
+        full_values = [row_title] + values
         self.rows.append(full_values)
 
     def add_column(self, col_name):
