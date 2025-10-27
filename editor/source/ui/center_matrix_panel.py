@@ -4,21 +4,8 @@ from model.treeview_model import TreeViewModel
 import base64
 
 class MatrixTreeView(ttk.Treeview):
-    # 체크박스 이미지 base64 (16x16)
-    CHECKED_IMG = (
-        'R0lGODlhEAAQAPIAAP///wAAAMLCwgAAAGZmZjMzM////wAAAAAAAAAAACH5BAAAAAAALAAAAAAQABAAAAM6CLrc/jDKSau9OOvNu/9gKI5kaZ5oqubYFADs='
-    )
-    UNCHECKED_IMG = (
-        'R0lGODlhEAAQAPIAAP///wAAAMLCwgAAAGZmZjMzM////wAAAAAAAAAAACH5BAAAAAAALAAAAAAQABAAAAM5CLrc/jDKSau9OOvNu/9gKI5kaZ5oqubYFADs='
-    )
-
-    def _load_images(self):
-        self.img_checked = tk.PhotoImage(data=base64.b64decode(self.CHECKED_IMG))
-        self.img_unchecked = tk.PhotoImage(data=base64.b64decode(self.UNCHECKED_IMG))
-
     def __init__(self, master, model: TreeViewModel, **kwargs):
         self.model = model
-        self._load_images()
         super().__init__(master, columns=self.model.get_columns(), show='headings', selectmode='none', height=15, **kwargs)
         self._setup_columns()
         self._load_rows()
