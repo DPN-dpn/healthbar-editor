@@ -1,12 +1,18 @@
 import tkinter as tk
 
-class Toolbar(tk.Frame):
-    def __init__(self, master, new_callback, load_callback, edit_callback):
-        super().__init__(master, bd=1, relief=tk.RAISED)
-        self.pack(side=tk.TOP, fill=tk.X)
-        btn_new = tk.Button(self, text="새로 만들기", command=new_callback)
-        btn_new.pack(side=tk.LEFT, padx=2, pady=2)
-        btn_load = tk.Button(self, text="프로젝트 불러오기", command=load_callback)
-        btn_load.pack(side=tk.LEFT, padx=2, pady=2)
-        btn_edit = tk.Button(self, text="편집하기", command=edit_callback)
-        btn_edit.pack(side=tk.LEFT, padx=2, pady=2)
+class Toolbar:
+    def __init__(self, master, new_callback, load_callback, mode_callback, treeview_width_callback):
+        self.menubar = tk.Menu(master)
+        # 파일 메뉴
+        file_menu = tk.Menu(self.menubar, tearoff=0)
+        file_menu.add_command(label="새로 만들기", command=new_callback)
+        file_menu.add_command(label="프로젝트 열기", command=load_callback)
+        file_menu.add_command(label="모드 불러오기", command=mode_callback)
+        self.menubar.add_cascade(label="파일", menu=file_menu)
+
+        # 트리뷰 메뉴
+        treeview_menu = tk.Menu(self.menubar, tearoff=0)
+        treeview_menu.add_command(label="폭/너비 설정", command=treeview_width_callback)
+        self.menubar.add_cascade(label="트리뷰", menu=treeview_menu)
+
+        master.config(menu=self.menubar)
