@@ -22,6 +22,8 @@ class HealthbarEditorApp:
         self.paned.pack(fill=tk.BOTH, expand=True)
 
         from app import handlers
+        from model.project_model import ProjectModel
+        self.project_model = None  # 현재 프로젝트 모델
         self.matrix_panel = MatrixPanel(self.paned, log_callback=self.append_log, handler=handlers)
         self.paned.add(self.matrix_panel, minsize=300, stretch='always')
         self.matrix_panel.hide_treeview()
