@@ -10,9 +10,11 @@ class Toolbar:
         file_menu.add_command(label="모드 불러오기", command=mode_callback)
         self.menubar.add_cascade(label="파일", menu=file_menu)
 
-        # 트리뷰 메뉴
+        # 트리뷰 메뉴 항상 추가
         treeview_menu = tk.Menu(self.menubar, tearoff=0)
-        treeview_menu.add_command(label="폭/너비 설정", command=treeview_width_callback)
+        treeview_menu.add_command(label="폭/너비 설정", command=treeview_width_callback, state="disabled")
         self.menubar.add_cascade(label="트리뷰", menu=treeview_menu)
 
         master.config(menu=self.menubar)
+        self.file_menu = file_menu
+        self.treeview_menu = treeview_menu

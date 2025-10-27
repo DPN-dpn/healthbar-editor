@@ -67,6 +67,7 @@ class MatrixTreeView(ttk.Treeview):
 class CenterMatrixPanel(tk.Frame):
     def __init__(self, master, log_callback=None):
         super().__init__(master, bg="#f0f0f0")
+        self.config(width=400, height=300)  # 기본 크기 확보
         # 레이아웃: 트리뷰(0,0), 열추가버튼(0,1), 세로스크롤(0,2), 패딩(0,3), 행추가버튼(1,0), 가로스크롤(2,0)
         self.grid_rowconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=0)
@@ -87,6 +88,16 @@ class CenterMatrixPanel(tk.Frame):
         self.tree.bind('<Configure>', self._update_scrollbars)
         self.tree.bind('<<TreeviewSelect>>', self._update_scrollbars)
         self.tree.bind('<MouseWheel>', self._update_scrollbars)
+
+    def hide_treeview(self):
+        self.tree.grid_remove()
+        self.tree.scrollbar_y.grid_remove()
+        self.tree.scrollbar_x.grid_remove()
+
+    def show_treeview(self):
+        self.tree.grid()
+        self.tree.scrollbar_y.grid()
+        self.tree.scrollbar_x.grid()
 
         # 열 추가 버튼
         self.btn_col_frame = tk.Frame(self, bg="#f0f0f0", width=60)
