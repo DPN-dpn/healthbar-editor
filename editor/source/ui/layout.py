@@ -17,11 +17,27 @@ class HealthbarEditorApp:
             lambda: self.handle_treeview_width()
         )
 
-        # 가운데 4분할 UI를 CenterMatrixPanel로 대체
-        self.center_panel = CenterMatrixPanel(self.root, log_callback=self.append_log)
-        self.center_panel.pack(fill=tk.BOTH, expand=True)
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Healthbar Editor")
+        self.root.geometry("800x600")
+        self.toolbar = Toolbar(
+            self.root,
+            lambda: handle_new_project(self),
+            lambda: handle_load_project(self),
+            lambda: self.handle_load_mode(),
+            lambda: self.handle_treeview_width()
+        )
 
-        self.logview = LogView(self.root)
+        # PanedWindow로 CenterMatrixPanel과 LogView를 수직 분할
+        self.paned = tk.PanedWindow(self.root, orient=tk.VERTICAL)
+        self.paned.pack(fill=tk.BOTH, expand=True)
+
+        self.center_panel = CenterMatrixPanel(self.paned, log_callback=self.append_log)
+        self.paned.add(self.center_panel, stretch='always')
+
+        self.logview = LogView(self.paned)
+        self.paned.add(self.logview, minsize=60)
 
     def handle_load_mode(self):
         self.append_log("모드 불러오기 기능 실행")

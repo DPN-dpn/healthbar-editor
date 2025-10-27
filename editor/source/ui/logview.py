@@ -4,9 +4,11 @@ from tkinter.scrolledtext import ScrolledText
 class LogView(tk.Frame):
     def __init__(self, master):
         super().__init__(master)
-        self.pack(side=tk.BOTTOM, fill=tk.X, padx=10, pady=10)
+        self.grid(row=1, column=0, sticky="nsew")
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
         self.log_text = ScrolledText(self, height=6, state="disabled", font=("Consolas", 10))
-        self.log_text.pack(fill=tk.X)
+        self.log_text.grid(row=0, column=0, sticky="nsew")
 
     def append_log(self, msg):
         import datetime
