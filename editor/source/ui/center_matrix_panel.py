@@ -5,9 +5,14 @@ from model.treeview_model import TreeViewModel
 class MatrixTreeView(ttk.Treeview):
     def __init__(self, master, model: TreeViewModel, **kwargs):
         self.model = model
-        super().__init__(master, columns=self.model.get_columns(), show='headings', selectmode='none', **kwargs)
+        # 트리뷰 생성 시 height 명시
+        super().__init__(master, columns=self.model.get_columns(), show='headings', selectmode='none', height=15, **kwargs)
         self._setup_columns()
         self._load_rows()
+        # 스크롤바 추가
+        self.scrollbar_y = ttk.Scrollbar(master, orient="vertical", command=self.yview)
+        self.configure(yscrollcommand=self.scrollbar_y.set)
+        self.scrollbar_y.grid(row=0, column=2, sticky="ns")
 
     def _setup_columns(self):
         for col in self.model.get_columns():
@@ -19,18 +24,18 @@ class MatrixTreeView(ttk.Treeview):
             self.insert("", "end", values=row)
 
     def add_row(self, values=None):
+        col_count = len(self.model.get_columns())
+        if values is None or len(values) != col_count:
+            values = ["" for _ in range(col_count)]
         self.model.add_row(values)
-        self.insert("", "end", values=values if values else ["" for _ in self.model.get_columns()])
+        # 새로 추가된 행만 insert
+        self.insert("", "end", values=self.model.get_rows()[-1])
 
     def add_column(self, col_name):
         self.model.add_column(col_name)
         self["columns"] = self.model.get_columns()
-        self.heading(col_name, text=col_name)
-        self.column(col_name, width=60, anchor='center')
-        for idx, item in enumerate(self.get_children("")):
-            values = list(self.item(item, "values"))
-            values.append("")
-            self.item(item, values=values)
+        self._setup_columns()  # 헤더/컬럼 UI 강제 갱신
+        self._load_rows()  # 열 추가 후 전체 행 다시 로드
 
 class CenterMatrixPanel(tk.Frame):
     def __init__(self, master, log_callback=None):
