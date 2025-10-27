@@ -1,7 +1,7 @@
 class TreeViewModel:
     def __init__(self, columns=None):
-        # 첫 번째 컬럼을 'No'(행 번호)로 고정
-        base_columns = columns if columns else ["A", "B", "C"]
+        # 첫 번째 컬럼을 행 제목으로, 기본 컬럼은 1칸
+        base_columns = columns if columns else ["A"]
         self.columns = ["No"] + base_columns
         self.rows = []
 
