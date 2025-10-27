@@ -20,6 +20,8 @@ class MatrixTreeView(ttk.Treeview):
             self.column(col, width=60, anchor='center')
 
     def _load_rows(self):
+        # 기존 행 모두 삭제 후 모델의 행을 한 번만 insert
+        self.delete(*self.get_children())
         for row in self.model.get_rows():
             self.insert("", "end", values=row)
 
