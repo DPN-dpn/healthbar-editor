@@ -5,12 +5,18 @@ def handle_new_project(app):
     app.project_model = ProjectModel()
     app.matrix_panel.set_project_model(app.project_model)
     app.append_log("새 프로젝트 생성 기능 실행")
-    app.matrix_panel.show_treeview()
+    app.show_treeview_panel()
+    # 창 제목에 프로젝트명 표시
+    if hasattr(app.project_model, "name"):
+        app.root.title(f"Healthbar Editor - {app.project_model.name}")
     # 실제 새 프로젝트 생성 로직 구현
 
 def handle_load_project(app):
     app.append_log("프로젝트 불러오기 기능 실행")
     # 실제 프로젝트 불러오기 로직 구현
+    # 예시: 불러온 후 프로젝트명 표시
+    if hasattr(app, "project_model") and hasattr(app.project_model, "name"):
+        app.root.title(f"Healthbar Editor - {app.project_model.name}")
 
 def handle_edit_project(app):
     app.append_log("편집 기능 실행")
