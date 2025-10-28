@@ -3,6 +3,30 @@ import tkinter.ttk as ttk
 from model.treeview_model import TreeViewModel
 
 class MatrixPanel(tk.Frame):
+    def set_project_model(self, project_model):
+        self.project_model = project_model
+        """
+        프로젝트 모델을 받아 트리뷰를 동기화
+        - 열: hp_step 개수만큼 (Col1, Col2, ...)
+        - 행: draw_list 개수만큼, 제목은 draw_list 값
+        - 체크박스: checked_list의 값으로 표시
+        """
+        # 열 정보
+        col_count = project_model.hp_step
+        columns = [f"Col{i+1}" for i in range(col_count)]
+        self.model.columns = columns
+
+        # 행 정보
+        self.model.rows = []
+        for i, title in enumerate(project_model.draw_list):
+            checked_row = project_model.checked_list[i] if i < len(project_model.checked_list) else [False]*col_count
+            # 첫 번째 값은 제목, 나머지는 체크 상태
+            row = [title] + checked_row
+            self.model.rows.append(row)
+
+        self.tree["columns"] = columns
+        self._setup_columns()
+        self._load_rows()
     def __init__(self, master, log_callback=None, handler=None):
         super().__init__(master, bg="#f0f0f0")
         self.config(width=400, height=300)
@@ -31,11 +55,6 @@ class MatrixPanel(tk.Frame):
         self.tree.bind('<<TreeviewSelect>>', self._update_scrollbars)
         self.tree.bind('<MouseWheel>', self._update_scrollbars)
 
-        self.btn_col_frame = None
-        self.btn_add_col = None
-        self.btn_row_frame = None
-        self.btn_add_row = None
-        self.empty_frame = None
         self.log_callback = log_callback
         self.handler = handler
 
@@ -73,8 +92,15 @@ class MatrixPanel(tk.Frame):
                 if col_idx > 0:
                     idx = self.tree.index(item_id)
                     row = self.model.rows[idx]
+                    # 트리뷰 내부 데이터 변경
                     row[col_idx] = 0 if row[col_idx] else 1
                     self._load_rows()
+                    # ProjectModel에 반영
+                    if hasattr(self, 'project_model') and self.project_model:
+                        # checked_list가 없으면 생성
+                        while len(self.project_model.checked_list) <= idx:
+                            self.project_model.checked_list.append([False]*len(self.model.columns))
+                        self.project_model.checked_list[idx][col_idx-1] = bool(row[col_idx])
 
     def add_column(self, col_name):
         if self.handler and hasattr(self.handler, 'handle_add_column'):
@@ -94,27 +120,6 @@ class MatrixPanel(tk.Frame):
         self.tree.grid()
         self.scrollbar_y.grid()
         self.scrollbar_x.grid()
-        if not self.btn_col_frame:
-            self.btn_col_frame = tk.Frame(self, bg="#f0f0f0", width=60)
-            self.btn_col_frame.grid(row=0, column=1, sticky="ns")
-            self.btn_col_frame.grid_propagate(False)
-            self.btn_add_col = tk.Button(
-                self.btn_col_frame, text="+", font=("Arial", 16), bg="#e6e6e6", borderwidth=0, relief="flat", activebackground="#cccccc",
-                command=self.add_column_event
-            )
-            self.btn_add_col.pack(fill=tk.BOTH, expand=True, padx=8, pady=20)
-        if not self.btn_row_frame:
-            self.btn_row_frame = tk.Frame(self, bg="#f0f0f0", height=40)
-            self.btn_row_frame.grid(row=1, column=0, sticky="ew")
-            self.btn_row_frame.grid_propagate(False)
-            self.btn_add_row = tk.Button(
-                self.btn_row_frame, text="+", font=("Arial", 16), bg="#e6e6e6", borderwidth=0, relief="flat", activebackground="#cccccc",
-                command=self.add_row_event
-            )
-            self.btn_add_row.pack(fill=tk.BOTH, expand=True, padx=20, pady=8)
-        if not self.empty_frame:
-            self.empty_frame = tk.Frame(self, bg="#f0f0f0", width=60, height=40)
-            self.empty_frame.grid(row=1, column=1, sticky="nsew")
 
     def _update_scrollbars(self, event=None):
         needs_v = len(self.tree.get_children()) > int(self.tree['height'])

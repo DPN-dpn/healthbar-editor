@@ -3,6 +3,7 @@
 def handle_new_project(app):
     from model.project_model import ProjectModel
     app.project_model = ProjectModel()
+    app.matrix_panel.set_project_model(app.project_model)
     app.append_log("새 프로젝트 생성 기능 실행")
     app.matrix_panel.show_treeview()
     # 실제 새 프로젝트 생성 로직 구현
