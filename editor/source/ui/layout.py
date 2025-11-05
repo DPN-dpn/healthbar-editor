@@ -21,9 +21,11 @@ class HealthbarEditorApp:
         self.notebook = ttk.Notebook(self.root)
         self.notebook.pack(fill=tk.BOTH, expand=True)
 
-        # 첫 번째 탭(비어 있음)
+        # 첫 번째 탭(설정)
         self.empty_tab = tk.Frame(self.notebook)
-        self.notebook.add(self.empty_tab, text="정보")
+        self.notebook.add(self.empty_tab, text="설정")
+        self.load_mode_btn = tk.Button(self.empty_tab, text="모드불러오기", command=self.handle_load_mode)
+        self.load_mode_btn.pack(pady=20)
 
         # 두 번째 탭(트리뷰)
         from model.project_model import ProjectModel
@@ -50,9 +52,6 @@ class HealthbarEditorApp:
 
     def handle_treeview_width(self):
         self.append_log("트리뷰 폭/너비 설정 기능 실행")
-
-    def append_log(self, msg):
-        self.logview.append_log(msg)
 
     def append_log(self, msg):
         self.logview.append_log(msg)
